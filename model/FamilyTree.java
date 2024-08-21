@@ -1,12 +1,11 @@
 package model;
 
-import service.Sorter;
-
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
-public class FamilyTree<T> implements Serializable {
+public class FamilyTree<T extends Person> implements Serializable {
     private List<T> members;
     private ParentChildChecker<T> checker;
 
@@ -17,6 +16,12 @@ public class FamilyTree<T> implements Serializable {
 
     public void addMember(T member) {
         members.add(member);
+        if (member.getMother() != null) {
+            member.getMother().addChild(member);
+        }
+        if (member.getFather() != null) {
+            member.getFather().addChild(member);
+        }
     }
 
     public List<T> getChildren(T parent) {
@@ -33,6 +38,14 @@ public class FamilyTree<T> implements Serializable {
         return members;
     }
 
+    public void sortByName() {
+        members.sort(Comparator.comparing(Person::getName));
+    }
+
+    public void sortByBirthDate() {
+        members.sort(Comparator.comparing(Person::getBirthDate));
+    }
+
     public void printFamilyTree() {
         for (T member : members) {
             System.out.println(member);
@@ -47,9 +60,5 @@ public class FamilyTree<T> implements Serializable {
             }
             System.out.println();
         }
-    }
-
-    public void sort(Sorter<T> sorter) {
-        sorter.sort(members);
     }
 }

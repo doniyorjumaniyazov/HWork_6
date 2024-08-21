@@ -3,48 +3,37 @@ package main;
 import model.FamilyTree;
 import model.Person;
 import model.PersonParentChildChecker;
-import service.SortByName;
-import service.SortByBirthDate;
+import presenter.FamilyTreePresenter;
+import service.FileHandler;
+import service.FamilyTreeService;
 import view.FamilyTreeConsoleView;
 
 import java.time.LocalDate;
 
 public class Main {
     public static void main(String[] args) {
-        // Модель
+        // Создаем необходимые объекты
         PersonParentChildChecker checker = new PersonParentChildChecker();
         FamilyTree<Person> familyTree = new FamilyTree<>(checker);
-
-        // Представление
+        FileHandler fileHandler = new FileHandler();
+        FamilyTreeService service = new FamilyTreeService(familyTree, fileHandler);
         FamilyTreeConsoleView view = new FamilyTreeConsoleView();
+        FamilyTreePresenter presenter = new FamilyTreePresenter(service, view);
 
-        // Презентер
-        FamilyTreePresenter presenter = new FamilyTreePresenter(familyTree, view);
+        // Добавляем примеры людей
+        Person mother = new Person("Мария", LocalDate.of(1950, 5, 10), null, null, null);
+        Person father = new Person("Иван", LocalDate.of(1948, 3, 15), null, null, null);
+        Person child = new Person("Данияр", LocalDate.of(1975, 8, 21), null, mother, father);
 
-        // Добавление людей через презентер
-        Person rustam = new Person("Рустам", LocalDate.of(1962, 4, 4), null, null, null);
-        Person boyjon = new Person("Бойжон", LocalDate.of(1940, 1, 1), null, null, null);
-        Person mukaddas = new Person("Мукаддас", LocalDate.of(1962, 5, 5), null, boyjon, null);
-        Person doniyor = new Person("Дониёр", LocalDate.of(1987, 11, 8), null, mukaddas, rustam);
-        Person sevora = new Person("Севара", LocalDate.of(1991, 2, 2), null, null, null);
-        Person samiy = new Person("Самий", LocalDate.of(2015, 12, 3), null, sevora, doniyor);
+        presenter.addPerson(mother);
+        presenter.addPerson(father);
+        presenter.addPerson(child);
 
-        presenter.addPerson(rustam);
-        presenter.addPerson(boyjon);
-        presenter.addPerson(mukaddas);
-        presenter.addPerson(doniyor);
-        presenter.addPerson(sevora);
-        presenter.addPerson(samiy);
-
-        // Отображение генеалогического древа
+        // Демонстрируем работу программы
         presenter.displayFamilyTree();
-
-        // Отображение детей
-        presenter.displayChildren(doniyor);
-
-        // Сортировка и отображение
-        presenter.sort(new SortByName());
-        presenter.sort(new SortByBirthDate());
+        presenter.sortByName();
+        presenter.displayFamilyTree();
+        presenter.saveFamilyTree("familyTree.dat");
+        presenter.loadFamilyTree("familyTree.dat");
     }
 }
-

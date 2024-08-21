@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Person implements Serializable {
+    private static int idCounter = 1;
+    private int id;
     private String name;
     private LocalDate birthDate;
     private LocalDate deathDate;
@@ -14,12 +16,17 @@ public class Person implements Serializable {
     private List<Person> children;
 
     public Person(String name, LocalDate birthDate, LocalDate deathDate, Person mother, Person father) {
+        this.id = idCounter++;
         this.name = name;
         this.birthDate = birthDate;
         this.deathDate = deathDate;
         this.mother = mother;
         this.father = father;
         this.children = new ArrayList<>();
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -52,7 +59,8 @@ public class Person implements Serializable {
 
     @Override
     public String toString() {
-        return "Имя: " + name +
+        return "ID: " + id +
+               ", Имя: " + name +
                ", Дата рождения: " + birthDate +
                ", Дата смерти: " + (deathDate != null ? deathDate : "Живой") +
                ", Мать: " + (mother != null ? mother.getName() : "Нет данных") +
